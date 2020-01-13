@@ -1,0 +1,56 @@
+apiVersion: kafka.strimzi.io/v1beta1
+kind: Kafka
+metadata:
+  name: ws
+  namespace: kafka
+spec:
+  entityOperator:
+    topicOperator:
+      reconciliationIntervalSeconds: 30
+      watchedNamespace: kafka
+    userOperator:
+      reconciliationIntervalSeconds: 30
+      watchedNamespace: kafka
+  kafka:
+    listeners:
+      external:
+        type: route
+        authentication:
+          type: tls
+      plain: {}
+      tls: {}
+    replicas: 3
+    storage:
+      class: local-sc
+      size: 10Gi
+      type: persistent-claim
+    template:
+      pod:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                        - worker0
+                        - worker1
+  zookeeper:
+    replicas: 3
+    storage:
+      class: local-sc
+      size: 5Gi
+      type: persistent-claim
+    template:
+      pod:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                      - worker0
+                      - worker1

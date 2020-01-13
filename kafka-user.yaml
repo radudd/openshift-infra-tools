@@ -1,0 +1,9 @@
+apiVersion: kafka.strimzi.io/v1alpha1
+kind: KafkaUser
+metadata:
+  name: test
+  labels:
+    strimzi.io/cluster: ws
+spec:
+  authentication:
+    type: tls
